@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nicodonato Barbería | Nonguén</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    },
+                    colors: {
+                        barber: {
+                            dark: '#111111',
+                            gold: '#d4af37',
+                            gray: '#2d2d2d'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-barber-dark text-gray-200 font-sans antialiased scroll-smooth">
+
+    <header class="relative h-screen flex items-center justify-center text-center bg-black">
+        <div class="absolute inset-0 opacity-40 bg-[url('https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center"></div>
+        <div class="relative z-10 px-4">
+            <h1 class="text-5xl md:text-7xl font-serif font-bold text-white mb-4 tracking-wider uppercase">Nicodonato</h1>
+            <p class="text-lg md:text-xl text-gray-300 mb-8 tracking-widest uppercase">Barbería • Nonguén, Concepción</p>
+            <a href="#agendar" class="inline-block bg-white text-black font-bold py-3 px-8 text-sm tracking-widest uppercase hover:bg-gray-200 transition duration-300">
+                Reserva Aquí
+            </a>
+        </div>
+    </header>
+
+    <section class="py-20 px-6 max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
+        <div>
+            <h2 class="text-3xl font-serif text-white mb-6">La Experiencia Nicodonato</h2>
+            <p class="text-gray-400 leading-relaxed">
+                Buscamos entregar el mejor servicio a nuestros clientes, siguiendo el vanguardismo y modernismo, pero siempre desde un enfoque tradicional. Logramos una experiencia completa en la cual cada cliente es un desafío, entregándoles un trato personalizado para obtener su mejor versión.
+            </p>
+        </div>
+        <div class="bg-barber-gray p-8 rounded-sm text-center border border-gray-800">
+            <h3 class="text-2xl font-serif text-white mb-6">Horario de Atención</h3>
+            <ul class="space-y-4 text-gray-300">
+                <li class="border-b border-gray-700 pb-2">
+                    <span class="block font-bold text-white">Lunes a Viernes</span>
+                    <span>10:00 - 18:00</span>
+                </li>
+                <li class="pt-2">
+                    <span class="block font-bold text-white">Sábado</span>
+                    <span>10:00 - 15:00</span>
+                </li>
+            </ul>
+            <p class="text-sm text-gray-500 mt-6 italic">Recomendamos siempre agendar tu hora.</p>
+        </div>
+    </section>
+
+    <section class="py-20 bg-black px-6">
+        <div class="max-w-5xl mx-auto">
+            <h2 class="text-4xl font-serif text-center text-white mb-16 uppercase">Servicios</h2>
+            
+            <div class="grid md:grid-cols-2 gap-16">
+                <div>
+                    <h3 class="text-2xl font-serif text-white border-b border-gray-800 pb-4 mb-6 uppercase">Cabello</h3>
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-baseline">
+                            <div>
+                                <h4 class="text-lg text-white font-bold">Corte de Cabello</h4>
+                                <p class="text-sm text-gray-500">Tijera, máquina y/o navaja + producto final</p>
+                            </div>
+                            <span class="text-lg text-white">$11.000</span>
+                        </div>
+                        <div class="flex justify-between items-baseline">
+                            <div>
+                                <h4 class="text-lg text-white font-bold">Peinado / Modelado</h4>
+                                <p class="text-sm text-gray-500">Secado, lavado y producto</p>
+                            </div>
+                            <span class="text-lg text-white">$5.000</span>
+                        </div>
+                        <div class="flex justify-between items-baseline">
+                            <div>
+                                <h4 class="text-lg text-white font-bold">Cejas</h4>
+                            </div>
+                            <span class="text-lg text-white">$3.500</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-2xl font-serif text-white border-b border-gray-800 pb-4 mb-6 uppercase">Afeitado & Facial</h3>
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-baseline">
+                            <div>
+                                <h4 class="text-lg text-white font-bold">Ritual de Barba (Perfilado)</h4>
+                                <p class="text-sm text-gray-500">Con toallas calientes y espuma</p>
+                            </div>
+                            <span class="text-lg text-white">$13.000</span>
+                        </div>
+                        <div class="flex justify-between items-baseline">
+                            <div>
+                                <h4 class="text-lg text-white font-bold">Ritual de Barba (Afeitado Total)</h4>
+                                <p class="text-sm text-gray-500">Afeitado completo tradicional</p>
+                            </div>
+                            <span class="text-lg text-white">$14.000</span>
+                        </div>
+                        <div class="flex justify-between items-baseline">
+                            <div>
+                                <h4 class="text-lg text-white font-bold">Limpieza Facial</h4>
+                                <p class="text-sm text-gray-500">Elimina impurezas y células muertas</p>
+                            </div>
+                            <span class="text-lg text-white">$14.000</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="agendar" class="py-20 px-6 max-w-5xl mx-auto text-center">
+        <h2 class="text-3xl font-serif text-white mb-2 uppercase">Reserva tu Hora con Nico</h2>
+        <p class="text-gray-400 mb-8">Selecciona el día y hora que más te acomode. Recibirás una confirmación automática en tu correo.</p>
+        
+        <div class="bg-white rounded-md overflow-hidden shadow-2xl border border-gray-800">
+            <div class="calendly-inline-widget w-full h-[650px]" data-url="https://calendly.com/martinub250/60min?hide_landing_page_details=1&hide_gdpr_banner=1&locale=es"></div>
+            <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+        </div>
+    </section>
+
+    <footer class="bg-black py-12 border-t border-gray-900">
+        <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-8 text-center md:text-left">
+            <div>
+                <h3 class="font-serif text-2xl text-white mb-4">Nicodonato</h3>
+                <p class="text-gray-500 text-sm">Tu barbería de confianza en Nonguén, Concepción.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4 uppercase tracking-wider text-sm">Contacto</h4>
+                <ul class="text-gray-400 text-sm space-y-2">
+                    <li>Sector Nonguén, Concepción</li>
+                    <li>+56 9 7893 7235</li>
+                    <li>contacto@nicodonato.cl</li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4 uppercase tracking-wider text-sm">Redes</h4>
+                <a href="https://instagram.com" target="_blank" class="text-gray-400 hover:text-white text-sm">Instagram</a><br>
+                <a href="https://wa.me/56978937235" target="_blank" class="text-gray-400 hover:text-white text-sm">WhatsApp</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
