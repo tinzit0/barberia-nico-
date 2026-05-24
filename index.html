@@ -30,13 +30,14 @@
 </head>
 <body class="bg-barber-dark text-gray-200 font-sans antialiased scroll-smooth overflow-x-hidden">
 
-    <!-- HERO SECTION (PORTADA LIMPIA - SIN FOTO AL MEDIO) -->
+    <!-- HERO SECTION (PORTADA LIMPIA - SOLO LOGO OFICIAL) -->
     <header class="relative h-screen flex items-center justify-center text-center bg-black px-4">
-        <!-- Fondo con el Logotipo gigante (mantenemos la ruta que ya te está funcionando) -->
+        <!-- Fondo de Tijeras -->
         <div class="absolute inset-0 opacity-30 bg-[url('assets/WhatsApp%20Image%202026-05-23%20at%2022.37.19.jpeg')] bg-cover bg-center transition-transform duration-[10000ms] hover:scale-105"></div>
         
-        <div class="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center mt-32">
-            <!-- LA FOTO FUE ELIMINADA DE AQUÍ -->
+        <div class="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
+            <!-- LOGO OFICIAL -->
+            <img src="assets/WhatsApp%20Image%202026-05-23%20at%2022.37.18.jpeg" alt="Donatostudio Logo" class="w-56 sm:w-72 md:w-80 h-auto mb-6 opacity-0 animate-[fadeInUp_1s_ease-out_forwards] rounded-sm shadow-2xl">
             
             <!-- Textos -->
             <p class="text-sm sm:text-lg md:text-xl text-gray-300 mb-8 tracking-widest uppercase opacity-0 animate-[fadeInUp_1s_ease-out_0.3s_forwards]">Barbería • Nonguén, Concepción</p>
@@ -60,19 +61,15 @@
             <h3 class="text-xl sm:text-2xl font-serif text-white mb-4 sm:mb-6">Horario de Atención</h3>
             <ul class="space-y-3 sm:space-y-4 text-sm sm:text-base text-gray-300">
                 <li class="border-b border-gray-700 pb-2">
-                    <span class="block font-bold text-white">Lunes a Viernes</span>
-                    <span>10:00 - 18:00</span>
-                </li>
-                <li class="pt-1">
-                    <span class="block font-bold text-white">Sábado</span>
-                    <span>10:00 - 15:00</span>
+                    <span class="block font-bold text-white">Lunes a Sábado</span>
+                    <span>10:00 - 20:00</span>
                 </li>
             </ul>
             <p class="text-xs sm:text-sm text-gray-500 mt-4 sm:mt-6 italic">Recomendamos siempre agendar tu hora con tiempo.</p>
         </div>
     </section>
 
-    <!-- SERVICIOS -->
+    <!-- SERVICIOS ACTUALIZADOS -->
     <section class="py-12 sm:py-20 bg-black px-4 sm:px-6">
         <div class="max-w-5xl mx-auto">
             <h2 class="text-3xl sm:text-4xl font-serif text-center text-white mb-10 sm:16 uppercase tracking-widest" data-aos="fade-up" data-aos-duration="800">Servicios</h2>
@@ -86,7 +83,7 @@
                                 <h4 class="text-base sm:text-lg text-white font-bold group-hover:text-barber-gold transition-colors duration-300">Corte de Cabello</h4>
                                 <p class="text-xs sm:text-sm text-gray-500">Tijera, máquina y/o navaja + producto final</p>
                             </div>
-                            <span class="text-base sm:text-lg text-white font-semibold">$11.000</span>
+                            <span class="text-base sm:text-lg text-white font-semibold">$12.000</span>
                         </div>
                         <div class="flex justify-between items-baseline group p-2 rounded-sm hover:bg-white/5 transition-colors duration-300">
                             <div class="max-w-[75%]">
@@ -99,27 +96,27 @@
                             <div>
                                 <h4 class="text-base sm:text-lg text-white font-bold group-hover:text-barber-gold transition-colors duration-300">Cejas</h4>
                             </div>
-                            <span class="text-base sm:text-lg text-white font-semibold">$3.500</span>
+                            <span class="text-base sm:text-lg text-white font-semibold">$2.000</span>
                         </div>
                     </div>
                 </div>
-                <!-- Afeitado & Facial -->
+                <!-- Barba & Combos -->
                 <div data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
-                    <h3 class="text-xl sm:text-2xl font-serif text-white border-b border-gray-800 pb-3 mb-4 sm:mb-6 uppercase tracking-wider text-center md:text-left">Afeitado & Facial</h3>
+                    <h3 class="text-xl sm:text-2xl font-serif text-white border-b border-gray-800 pb-3 mb-4 sm:mb-6 uppercase tracking-wider text-center md:text-left">Barba & Combos</h3>
                     <div class="space-y-4 sm:space-y-6">
                         <div class="flex justify-between items-baseline group p-2 rounded-sm hover:bg-white/5 transition-colors duration-300">
                             <div class="max-w-[75%]">
-                                <h4 class="text-base sm:text-lg text-white font-bold group-hover:text-barber-gold transition-colors duration-300">Ritual de Barba (Perfilado)</h4>
-                                <p class="text-xs sm:text-sm text-gray-500">Con toallas calientes y espuma</p>
+                                <h4 class="text-base sm:text-lg text-white font-bold group-hover:text-barber-gold transition-colors duration-300">Corte + Barba</h4>
+                                <p class="text-xs sm:text-sm text-gray-500">El servicio clásico completo</p>
                             </div>
-                            <span class="text-base sm:text-lg text-white font-semibold">$13.000</span>
+                            <span class="text-base sm:text-lg text-white font-semibold">$17.000</span>
                         </div>
                         <div class="flex justify-between items-baseline group p-2 rounded-sm hover:bg-white/5 transition-colors duration-300">
                             <div class="max-w-[75%]">
-                                <h4 class="text-base sm:text-lg text-white font-bold group-hover:text-barber-gold transition-colors duration-300">Ritual de Barba (Afeitado Total)</h4>
-                                <p class="text-xs sm:text-sm text-gray-500">Afeitado completo tradicional</p>
+                                <h4 class="text-base sm:text-lg text-white font-bold group-hover:text-barber-gold transition-colors duration-300">Ritual de Barba</h4>
+                                <p class="text-xs sm:text-sm text-gray-500">Afeitado o perfilado profesional</p>
                             </div>
-                            <span class="text-base sm:text-lg text-white font-semibold">$14.000</span>
+                            <span class="text-base sm:text-lg text-white font-semibold">$8.000</span>
                         </div>
                         <div class="flex justify-between items-baseline group p-2 rounded-sm hover:bg-white/5 transition-colors duration-300">
                             <div class="max-w-[75%]">
@@ -142,8 +139,7 @@
         <!-- FOTO INDIVIDUAL DEL CORTE -->
         <div class="flex justify-center mb-16">
             <div class="w-full max-w-sm group relative overflow-hidden bg-barber-gray rounded-sm aspect-[3/4] shadow-md border border-gray-800" data-aos="zoom-in" data-aos-duration="800">
-                <!-- Usamos la imagen 18 aquí ya que vimos que esa es la del corte en tu PC -->
-                <img src="assets/WhatsApp%20Image%202026-05-23%20at%2022.37.18.jpeg" alt="Corte Real Donatostudio" class="w-full h-full object-cover transition duration-700 ease-out group-hover:scale-110">
+                <img src="assets/WhatsApp%20Image%202026-05-23%20at%2022.37.19(1).jpeg" alt="Corte Real Donatostudio" class="w-full h-full object-cover transition duration-700 ease-out group-hover:scale-110">
                 <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-all duration-400 flex items-end p-4">
                     <div>
                         <span class="text-xs text-barber-gold font-bold tracking-wider uppercase block mb-1">Donatostudio</span>
