@@ -30,20 +30,26 @@
 </head>
 <body class="bg-barber-dark text-gray-200 font-sans antialiased scroll-smooth overflow-x-hidden">
 
-    <!-- HERO SECTION (PORTADA CORREGIDA) -->
+    <!-- HERO SECTION (PORTADA TOTALMENTE CORREGIDA Y LIMPIA) -->
     <header class="relative h-screen flex items-center justify-center text-center bg-black px-4">
+        <!-- Fondo panorámico difuminado de tus tijeras profesionales -->
         <div class="absolute inset-0 opacity-30 bg-[url('assets/WhatsApp%20Image%202026-05-23%20at%2022.37.19.jpeg')] bg-cover bg-center transition-transform duration-[10000ms] hover:scale-105"></div>
+        
         <div class="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center">
-            <!-- Logotipo Oficial centrado e impecable -->
+            <!-- Logotipo Oficial centrado impecable, sin ninguna otra foto molestando -->
             <img src="assets/WhatsApp%20Image%202026-05-23%20at%2022.37.18.jpeg" alt="Donatostudio Logo" class="w-56 sm:w-72 md:w-80 h-auto mb-6 opacity-0 animate-[fadeInUp_1s_ease-out_forwards] rounded-sm shadow-2xl">
+            
+            <!-- Eslogan e Información de Ubicación -->
             <p class="text-sm sm:text-lg md:text-xl text-gray-300 mb-8 tracking-widest uppercase opacity-0 animate-[fadeInUp_1s_ease-out_0.3s_forwards]">Barbería • Nonguén, Concepción</p>
+            
+            <!-- Botón de Reserva con enlace al calendario virtual -->
             <a href="#agendar" class="inline-block bg-white text-black font-bold py-3 px-6 sm:px-8 text-xs sm:text-sm tracking-widest uppercase hover:bg-barber-gold hover:text-white transition-all duration-500 ease-out shadow-lg opacity-0 animate-[fadeInUp_1s_ease-out_0.6s_forwards]">
                 Reserva con Nico
             </a>
         </div>
     </header>
 
-    <!-- NOSOTROS Y HORARIO -->
+    <!-- NOSOTROS Y HORARIO (Adaptable para móvil y PC) -->
     <section class="py-12 sm:py-20 px-4 sm:px-6 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
         <div data-aos="fade-right" data-aos-duration="1000" class="text-center md:text-left">
             <h2 class="text-2xl sm:text-3xl font-serif text-white mb-4 sm:mb-6">La Experiencia Donatostudio</h2>
@@ -129,7 +135,7 @@
         </div>
     </section>
 
-    <!-- SECCIÓN MULTIMEDIA (FOTOS Y VIDEOS DE WHATSAPP REORGANIZADOS) -->
+    <!-- SECCIÓN MULTIMEDIA (FOTOS Y VIDEOS EN SUS RUTAS CORRECTAS) -->
     <section class="py-12 sm:py-20 px-4 sm:px-6 max-w-6xl mx-auto">
         <h2 class="text-2xl sm:text-3xl font-serif text-center text-white mb-2 uppercase tracking-wider" data-aos="fade-up" data-aos-duration="800">Cortes Realizados</h2>
         <p class="text-center text-xs sm:text-sm text-gray-400 mb-8 sm:mb-12" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">Trabajos reales en el studio con la firma de Nico.</p>
@@ -147,7 +153,7 @@
             </div>
         </div>
 
-        <!-- REELS DE VIDEOS EN MOVIMIENTO -->
+        <!-- REELS DE VIDEOS EN MOVIMIENTO AUTOMÁTICO -->
         <h3 class="text-xl font-serif text-center text-white mb-6 uppercase tracking-wider" data-aos="fade-up" data-aos-duration="800">El Studio en Acción</h3>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
             <div class="bg-barber-gray rounded-sm overflow-hidden aspect-[9/16] shadow-lg border border-gray-800 relative group" data-aos="fade-up" data-aos-delay="100">
@@ -168,7 +174,7 @@
         </div>
     </section>
 
-    <!-- RESEÑAS -->
+    <!-- RESEÑAS (TESTIMONIALES) -->
     <section id="resenas" class="py-12 sm:py-20 bg-[#151515] px-4 sm:px-6">
         <div class="max-w-6xl mx-auto">
             <h2 class="text-3xl font-serif text-center text-white mb-3 uppercase tracking-wider" data-aos="fade-up" data-aos-duration="800">Lo que dicen los clientes</h2>
@@ -235,7 +241,7 @@
         </div>
     </section>
 
-    <!-- AGENDAMIENTO -->
+    <!-- AGENDAMIENTO (WIDGET INTEGRADO DE CALENDLY) -->
     <section id="agendar" class="py-12 sm:py-20 px-2 sm:px-6 max-w-5xl mx-auto text-center" data-aos="fade-up" data-aos-duration="1000">
         <h2 class="text-2xl sm:text-3xl font-serif text-white mb-2 uppercase tracking-wide px-2">Reserva tu Hora con Nico en Donatostudio</h2>
         <p class="text-xs sm:text-sm text-gray-400 mb-6 sm:mb-8 px-4">Selecciona el día y hora que más te acomode. Recibirás una confirmación automática en tu correo.</p>
@@ -245,7 +251,7 @@
         </div>
     </section>
 
-    <!-- FOOTER -->
+    <!-- FOOTER (PIE DE PÁGINA) -->
     <footer class="bg-black py-10 sm:py-12 border-t border-gray-900">
         <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
             <div class="space-y-1">
@@ -284,6 +290,7 @@
         </div>
     </footer>
 
+    <!-- Animaciones Base -->
     <style>
         @keyframes fadeInUp {
             from {
@@ -297,6 +304,7 @@
         }
     </style>
 
+    <!-- Inicialización de Efectos Dinámicos (AOS) -->
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init({
