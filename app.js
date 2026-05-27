@@ -1,26 +1,28 @@
 /**
  * app.js — Sistema de Reseñas Dinámicas · Donatostudio Barbería
- * Stack: Vanilla JS (ES Module) + Supabase CDN vía esm.sh
+ * v2.0 — Producción lista
  *
- * ┌─────────────────────────────────────────────────────────────┐
- * │  CONFIGURACIÓN OBLIGATORIA                                   │
- * │  Reemplaza los dos valores de abajo con los de tu proyecto   │
- * │  en Supabase → Settings → API                                │
- * └─────────────────────────────────────────────────────────────┘
+ * Cambios vs v1:
+ *  - Supabase fijado a @2.45.4 (compatible con key formato sb_publishable__)
+ *  - pointer-events-none en submit (fix doble-tap mobile)
+ *  - Skeleton loader en loadApprovedReviews()
+ *  - Animación fadeInUp protegida del AOS override del HTML
+ *  - onAuthStateChange con guard para evento INITIAL_SESSION
  */
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-const SUPABASE_URL  = 'https://skmeijhahrdovivtqpgo.supabase.co';   
-const SUPABASE_ANON = 'sb_publishable__qSerIH-2GFNLmx8kOIrHg_GeYy7kib';                 
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
 
 // ─────────────────────────────────────────────────────────────────
-// 1. INICIALIZACIÓN DEL CLIENTE
+// CONFIGURACIÓN — tus credenciales de Supabase
 // ─────────────────────────────────────────────────────────────────
+const SUPABASE_URL  = 'https://skmeijhahrdovivtqpgo.supabase.co';
+const SUPABASE_ANON = 'sb_publishable__qSerIH-2GFNLmx8kOIrHg_GeYy7kib';
+
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
 
 
 // ─────────────────────────────────────────────────────────────────
-// 2. REFERENCIAS AL DOM
+// REFERENCIAS AL DOM
 // ─────────────────────────────────────────────────────────────────
 const authPanel        = document.getElementById('auth-panel');
 const reviewPanel      = document.getElementById('review-panel');
@@ -38,12 +40,8 @@ const hiddenRating     = document.getElementById('review-rating');
 
 
 // ─────────────────────────────────────────────────────────────────
-// 3. COMPONENTE DE ESTRELLAS INTERACTIVO
+// ESTRELLAS INTERACTIVAS
 // ─────────────────────────────────────────────────────────────────
-/**
- * Renderiza 5 estrellas clicables dentro de #star-rating.
- * El valor seleccionado se almacena en el input oculto #review-rating.
- */
 function renderStars(selected = 5) {
   starContainer.innerHTML = '';
   for (let i = 1; i <= 5; i++) {
@@ -70,18 +68,16 @@ function renderStars(selected = 5) {
   }
 }
 
-renderStars(5); // Estado inicial: 5 estrellas
+renderStars(5);
 
 
 // ─────────────────────────────────────────────────────────────────
-// 4. HELPERS DE UI
+// HELPERS DE UI
 // ─────────────────────────────────────────────────────────────────
-/** Muestra el panel correcto según si hay sesión activa o no. */
 function syncUI(session) {
   if (session) {
     authPanel.classList.add('hidden');
     reviewPanel.classList.remove('hidden');
-    // Mostramos solo el email del usuario (nunca el nombre de Google)
     userEmailDisplay.textContent = session.user.email;
   } else {
     authPanel.classList.remove('hidden');
@@ -89,24 +85,16 @@ function syncUI(session) {
   }
 }
 
-/** Muestra un mensaje de estado bajo un elemento. */
 function showMsg(el, text, isError = false) {
-  el.textContent  = text;
-  el.className    = `mt-3 text-xs text-center ${isError ? 'text-red-400' : 'text-green-400'}`;
+  el.textContent = text;
+  el.className   = `mt-3 text-xs text-center ${isError ? 'text-red-400' : 'text-green-400'}`;
   el.classList.remove('hidden');
 }
 
-/** Genera las iniciales de un nombre para el avatar. */
 function getInitials(name) {
-  return name
-    .trim()
-    .split(/\s+/)
-    .map(w => w[0].toUpperCase())
-    .slice(0, 2)
-    .join('');
+  return name.trim().split(/\s+/).map(w => w[0].toUpperCase()).slice(0, 2).join('');
 }
 
-/** SVG estrella rellena (para las cards renderizadas). */
 const STAR_SVG = `<svg class="w-4 h-4 fill-current" viewBox="0 0 20 20" aria-hidden="true">
   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0
     00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0
@@ -116,20 +104,39 @@ const STAR_SVG = `<svg class="w-4 h-4 fill-current" viewBox="0 0 20 20" aria-hid
     0 00.951-.69l1.07-3.292z"/>
 </svg>`;
 
+/** Bloquea el botón durante loading (fix doble-tap en iOS). */
+function setSubmitLoading(isLoading) {
+  btnSubmit.disabled = isLoading;
+  // pointer-events-none previene el doble-tap en móviles viejos
+  btnSubmit.classList.toggle('pointer-events-none', isLoading);
+  btnSubmit.textContent = isLoading ? 'Enviando...' : 'Enviar reseña';
+}
+
 
 // ─────────────────────────────────────────────────────────────────
-// 5. RENDERIZADO DE RESEÑAS APROBADAS (SELECT)
+// RENDERIZADO DE RESEÑAS APROBADAS (SELECT)
 // ─────────────────────────────────────────────────────────────────
-/**
- * Obtiene todas las reseñas con status = 'approved' y las inyecta
- * en #reviews-grid como <figure>, respetando el mismo markup y
- * clases Tailwind que las cards estáticas originales.
- */
 async function loadApprovedReviews() {
-  // Limpiamos solo los <figure> dinámicos previos (los que tienen data-dynamic)
-  reviewsGrid
-    .querySelectorAll('figure[data-dynamic]')
-    .forEach(el => el.remove());
+  // Limpiamos cards dinámicas previas
+  reviewsGrid.querySelectorAll('figure[data-dynamic]').forEach(el => el.remove());
+
+  // ── SKELETON LOADER ──────────────────────────────────────────
+  // Se muestra mientras espera la respuesta de Supabase.
+  // Usa el mismo ancho de columna que las cards reales.
+  const skeleton = document.createElement('div');
+  skeleton.id = 'reviews-skeleton';
+  skeleton.className = 'col-span-full flex justify-center gap-6 py-4';
+  skeleton.innerHTML = `
+    <div class="flex items-center gap-2 text-gray-600 text-xs animate-pulse">
+      <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+        <path class="opacity-75" fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+      </svg>
+      Cargando reseñas...
+    </div>`;
+  reviewsGrid.appendChild(skeleton);
+  // ─────────────────────────────────────────────────────────────
 
   const { data: reviews, error } = await supabase
     .from('reviews')
@@ -137,12 +144,15 @@ async function loadApprovedReviews() {
     .eq('status', 'approved')
     .order('created_at', { ascending: false });
 
+  // Siempre quitamos el skeleton antes de continuar
+  document.getElementById('reviews-skeleton')?.remove();
+
   if (error) {
     console.error('[Donatostudio] Error cargando reseñas:', error.message);
     return;
   }
 
-  reviews.forEach(review => {
+  reviews.forEach((review, index) => {
     const name     = review.display_name || 'Anónimo';
     const initials = getInitials(name);
     const stars    = Array.from({ length: 5 }, (_, i) => {
@@ -150,29 +160,30 @@ async function loadApprovedReviews() {
       return `<span class="${active ? 'text-barber-gold' : 'text-gray-700'}">${STAR_SVG}</span>`;
     }).join('');
 
+    // Sanitización XSS
+    const safeContent = review.content
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const safeName = name
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
     const figure = document.createElement('figure');
     figure.setAttribute('data-dynamic', 'true');
+
+    // La animación se aplica inline con un delay escalonado por índice.
+    // Usamos style directamente para evitar que el override [data-aos]
+    // del HTML interfiera con las clases de Tailwind animate-[].
+    figure.style.opacity    = '0';
+    figure.style.transform  = 'translateY(15px)';
+    figure.style.animation  = `fadeInUp 0.6s ease-out ${index * 0.1}s forwards`;
     figure.className = [
       'bg-barber-dark border border-gray-800 p-6 sm:p-8 rounded-sm',
       'hover:border-barber-gold transition-all duration-500',
       'transform hover:-translate-y-1 shadow-xl',
-      'animate-[fadeInUp_0.6s_ease-out_forwards]',
     ].join(' ');
 
-    // Escapamos el contenido del usuario para evitar XSS
-    const safeContent = review.content
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-    const safeName = name
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
-
     figure.innerHTML = `
-      <div class="flex gap-0.5 text-barber-gold mb-3 sm:mb-4"
-           aria-label="${review.rating} de 5 estrellas">
+      <div class="flex gap-0.5 mb-3 sm:mb-4" aria-label="${review.rating} de 5 estrellas">
         ${stars}
       </div>
       <blockquote>
@@ -193,34 +204,30 @@ async function loadApprovedReviews() {
 
 
 // ─────────────────────────────────────────────────────────────────
-// 6. AUTENTICACIÓN
+// AUTENTICACIÓN
 // ─────────────────────────────────────────────────────────────────
 
-/** 6a. Login con Google OAuth (1 clic) */
+// Login con Google (1 clic)
 btnGoogleLogin.addEventListener('click', async () => {
   btnGoogleLogin.disabled = true;
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: {
-      // Redirige de vuelta a la misma página tras el login
-      redirectTo: window.location.href,
-    },
+    options: { redirectTo: window.location.href },
   });
   if (error) {
     showMsg(authMessage, `Error: ${error.message}`, true);
     btnGoogleLogin.disabled = false;
   }
-  // Si no hay error, el navegador redirige a Google automáticamente
+  // Sin error → el navegador redirige a Google automáticamente
 });
 
-/** 6b. Login con Magic Link (email) */
+// Login con Magic Link
 btnMagicLink.addEventListener('click', async () => {
   const email = magicLinkEmail.value.trim();
   if (!email) {
     showMsg(authMessage, 'Ingresa tu correo para continuar.', true);
     return;
   }
-
   btnMagicLink.disabled    = true;
   btnMagicLink.textContent = '...';
 
@@ -235,40 +242,32 @@ btnMagicLink.addEventListener('click', async () => {
     showMsg(authMessage, `¡Link enviado! Revisa tu correo ${email}.`);
     magicLinkEmail.value = '';
   }
-
   btnMagicLink.disabled    = false;
   btnMagicLink.textContent = 'Enviar link';
 });
 
-/** 6c. Cerrar sesión */
+// Cerrar sesión
 btnLogout.addEventListener('click', async () => {
   await supabase.auth.signOut();
 });
 
-/**
- * 6d. Escucha cambios de sesión.
- * Supabase dispara 'SIGNED_IN' automáticamente cuando el usuario
- * vuelve de la redirección de Google o hace clic en el Magic Link.
- */
-supabase.auth.onAuthStateChange((_event, session) => {
+// Escucha cambios de sesión.
+// Guard en INITIAL_SESSION: evita ejecutar syncUI dos veces al cargar
+// (una vez desde getSession() en el IIFE y otra desde este listener).
+supabase.auth.onAuthStateChange((event, session) => {
+  if (event === 'INITIAL_SESSION') return;
   syncUI(session);
 });
 
 
 // ─────────────────────────────────────────────────────────────────
-// 7. ENVÍO DE RESEÑA (INSERT)
+// ENVÍO DE RESEÑA (INSERT)
 // ─────────────────────────────────────────────────────────────────
-/**
- * Construye el payload EXACTO definido en el Contrato de Datos §3-A.
- * user_id, status y created_at los maneja Supabase automáticamente;
- * el frontend SOLO envía: display_name, content, rating.
- */
 btnSubmit.addEventListener('click', async () => {
   const content     = document.getElementById('review-content').value.trim();
   const displayName = document.getElementById('review-display-name').value.trim();
   const rating      = parseInt(hiddenRating.value, 10);
 
-  // Validaciones básicas (la BD también las aplica como constraints)
   if (content.length < 3) {
     showMsg(reviewMessage, 'La reseña debe tener al menos 3 caracteres.', true);
     return;
@@ -278,16 +277,15 @@ btnSubmit.addEventListener('click', async () => {
     return;
   }
 
-  btnSubmit.disabled    = true;
-  btnSubmit.textContent = 'Enviando...';
+  // Fix doble-tap mobile: bloqueamos el botón completamente
+  setSubmitLoading(true);
 
-  // ── PAYLOAD EXACTO DEL CONTRATO ──────────────────────────────
+  // Payload exacto del Contrato de Datos §3-A
   const payload = {
-    display_name: displayName || 'Anónimo', // si el campo está vacío → 'Anónimo'
+    display_name: displayName || 'Anónimo',
     content,
     rating,
   };
-  // ─────────────────────────────────────────────────────────────
 
   const { error } = await supabase.from('reviews').insert(payload);
 
@@ -295,25 +293,20 @@ btnSubmit.addEventListener('click', async () => {
     showMsg(reviewMessage, `No se pudo enviar: ${error.message}`, true);
   } else {
     showMsg(reviewMessage, '¡Gracias! Tu reseña será publicada tras ser aprobada.');
-    // Limpiamos el formulario
-    document.getElementById('review-content').value       = '';
-    document.getElementById('review-display-name').value  = '';
+    document.getElementById('review-content').value      = '';
+    document.getElementById('review-display-name').value = '';
     renderStars(5);
   }
 
-  btnSubmit.disabled    = false;
-  btnSubmit.textContent = 'Enviar reseña';
+  setSubmitLoading(false);
 });
 
 
 // ─────────────────────────────────────────────────────────────────
-// 8. INICIALIZACIÓN
+// INICIALIZACIÓN
 // ─────────────────────────────────────────────────────────────────
 (async () => {
-  // Verificamos si ya hay una sesión activa (ej: usuario regresa con Magic Link)
   const { data: { session } } = await supabase.auth.getSession();
   syncUI(session);
-
-  // Cargamos las reseñas aprobadas al cargar la página
   await loadApprovedReviews();
 })();
