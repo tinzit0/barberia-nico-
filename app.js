@@ -10,8 +10,8 @@
  */
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-const SUPABASE_URL  = 'https://TU_PROJECT_ID.supabase.co';   // ← reemplazar
-const SUPABASE_ANON = 'TU_ANON_PUBLIC_KEY';                  // ← reemplazar
+const SUPABASE_URL  = 'https://skmeijhahrdovivtqpgo.supabase.co';   
+const SUPABASE_ANON = 'sb_publishable__qSerIH-2GFNLmx8kOIrHg_GeYy7kib';                 
 
 // ─────────────────────────────────────────────────────────────────
 // 1. INICIALIZACIÓN DEL CLIENTE
