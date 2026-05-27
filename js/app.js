@@ -1,6 +1,6 @@
 /**
  * app.js — Sistema de Reseñas Dinámicas · Donatostudio Barbería
- * v3.0 — Diseño Premium y Paginación
+ * v3.1 — Diseño Premium Compacto
  */
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
@@ -102,7 +102,7 @@ function setSubmitLoading(isLoading) {
 }
 
 // ─────────────────────────────────────────────────────────────────
-// RENDERIZADO Y PAGINACIÓN DE RESEÑAS CON DISEÑO PREMIUM
+// RENDERIZADO Y PAGINACIÓN DE RESEÑAS CON DISEÑO COMPACTO
 // ─────────────────────────────────────────────────────────────────
 let todasLasResenas = [];
 let resenasVisibles = 3; 
@@ -161,33 +161,33 @@ function renderizarResenasVisibles() {
     figure.style.transform  = 'translateY(15px)';
     figure.style.animation  = `fadeInUp 0.6s ease-out ${index * 0.1}s forwards`;
     
-    // NUEVAS CLASES DE DISEÑO PREMIUM
-    figure.className = 'relative flex flex-col overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] border border-gray-800/60 p-6 sm:p-8 rounded-md hover:border-barber-gold/80 transition-all duration-500 transform hover:-translate-y-1 shadow-2xl group';
+    // CLASES MODIFICADAS PARA HACERLO MÁS COMPACTO (p-4 sm:p-5 en lugar de p-6 sm:p-8)
+    figure.className = 'relative flex flex-col overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] border border-gray-800/60 p-4 sm:p-5 rounded-md hover:border-barber-gold/80 transition-all duration-500 transform hover:-translate-y-1 shadow-xl group';
 
     figure.innerHTML = `
-      <!-- Comilla decorativa de fondo -->
-      <svg class="absolute top-4 right-4 w-16 h-16 text-gray-800 opacity-20 group-hover:text-barber-gold group-hover:opacity-10 transition-colors duration-500 pointer-events-none" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+      <!-- Comilla decorativa de fondo más pequeña -->
+      <svg class="absolute top-3 right-3 w-10 h-10 text-gray-800 opacity-20 group-hover:text-barber-gold group-hover:opacity-10 transition-colors duration-500 pointer-events-none" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
       </svg>
 
-      <!-- Estrellas -->
-      <div class="relative z-10 flex gap-1 mb-4 sm:mb-5" aria-label="${review.rating} de 5 estrellas">
+      <!-- Estrellas con menos margen -->
+      <div class="relative z-10 flex gap-1 mb-3" aria-label="${review.rating} de 5 estrellas">
         ${stars}
       </div>
 
-      <!-- Texto de reseña -->
-      <blockquote class="relative z-10 flex-grow mb-6">
-        <p class="text-sm sm:text-base text-gray-300 italic leading-relaxed">"${safeContent}"</p>
+      <!-- Texto de reseña con fuente un poco más pequeña -->
+      <blockquote class="relative z-10 flex-grow mb-4">
+        <p class="text-xs sm:text-sm text-gray-300 italic leading-relaxed">"${safeContent}"</p>
       </blockquote>
 
-      <!-- Usuario y Avatar -->
-      <figcaption class="relative z-10 flex items-center border-t border-gray-800/50 pt-4 mt-auto">
-        <div class="w-10 h-10 bg-black border border-barber-gold/50 rounded-full flex items-center justify-center text-barber-gold font-bold font-serif text-sm shadow-[0_0_10px_rgba(212,175,55,0.15)]" aria-hidden="true">
+      <!-- Usuario y Avatar reducidos -->
+      <figcaption class="relative z-10 flex items-center border-t border-gray-800/50 pt-3 mt-auto">
+        <div class="w-8 h-8 bg-black border border-barber-gold/50 rounded-full flex items-center justify-center text-barber-gold font-bold font-serif text-xs shadow-[0_0_8px_rgba(212,175,55,0.15)]" aria-hidden="true">
           ${initials}
         </div>
         <cite class="ml-3 not-italic">
-          <p class="text-white font-bold text-sm tracking-wide">${safeName}</p>
-          <p class="text-[10px] sm:text-xs text-barber-gold/70 mt-0.5 uppercase tracking-wider font-semibold">Cliente Verificado</p>
+          <p class="text-white font-bold text-xs tracking-wide">${safeName}</p>
+          <p class="text-[9px] sm:text-[10px] text-barber-gold/70 mt-0.5 uppercase tracking-wider font-semibold">Cliente Verificado</p>
         </cite>
       </figcaption>`;
 
