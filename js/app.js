@@ -1,6 +1,6 @@
 /**
  * app.js — Sistema de Reseñas Dinámicas · Donatostudio Barbería
- * v3.0 — Diseño Premium y Paginación
+ * v3.1 — Paginación Perfecta y Seguridad
  */
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
@@ -153,6 +153,7 @@ function renderizarResenasVisibles() {
       return `<span class="${active ? 'text-barber-gold' : 'text-gray-700'}">${STAR_SVG}</span>`;
     }).join('');
 
+    // Sanitización correcta para evitar inyección de código (XSS)
     const safeContent = review.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     const safeName    = name.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
@@ -161,28 +162,21 @@ function renderizarResenasVisibles() {
     figure.style.transform  = 'translateY(15px)';
     figure.style.animation  = `fadeInUp 0.6s ease-out ${index * 0.1}s forwards`;
     
-    // AQUÍ ESTÁ EL CAMBIO: 
-    // "p-6 sm:p-8" le devuelve su altura normal.
-    // "w-full max-w-sm mx-auto" evita que se alargue horizontalmente y que choque con los bordes.
     figure.className = 'relative w-full max-w-sm mx-auto flex flex-col overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] border border-gray-800/60 p-6 sm:p-8 rounded-md hover:border-barber-gold/80 transition-all duration-500 transform hover:-translate-y-1 shadow-2xl group';
 
     figure.innerHTML = `
-      <!-- Comilla decorativa de fondo -->
       <svg class="absolute top-4 right-4 w-14 h-14 text-gray-800 opacity-20 group-hover:text-barber-gold group-hover:opacity-10 transition-colors duration-500 pointer-events-none" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
       </svg>
 
-      <!-- Estrellas -->
       <div class="relative z-10 flex gap-1 mb-4 sm:mb-5" aria-label="${review.rating} de 5 estrellas">
         ${stars}
       </div>
 
-      <!-- Texto de reseña -->
       <blockquote class="relative z-10 flex-grow mb-6">
         <p class="text-sm sm:text-base text-gray-300 italic leading-relaxed">"${safeContent}"</p>
       </blockquote>
 
-      <!-- Usuario y Avatar -->
       <figcaption class="relative z-10 flex items-center border-t border-gray-800/50 pt-4 mt-auto">
         <div class="w-10 h-10 bg-black border border-barber-gold/50 rounded-full flex items-center justify-center text-barber-gold font-bold font-serif text-sm shadow-[0_0_10px_rgba(212,175,55,0.15)]" aria-hidden="true">
           ${initials}
@@ -196,6 +190,7 @@ function renderizarResenasVisibles() {
     reviewsGrid.appendChild(figure);
   });
 
+  // Mostrar u ocultar el botón de "Ver Más" según si quedan reseñas
   if (loadMoreContainer) {
     if (todasLasResenas.length > resenasVisibles) {
       loadMoreContainer.classList.remove('hidden');
@@ -204,6 +199,17 @@ function renderizarResenasVisibles() {
     }
   }
 }
+
+// ─────────────────────────────────────────────────────────────────
+// BOTÓN VER MÁS
+// ─────────────────────────────────────────────────────────────────
+if (btnLoadMore) {
+  btnLoadMore.addEventListener('click', () => {
+    resenasVisibles += 3; // Suma 3 reseñas más a la vista
+    renderizarResenasVisibles();
+  });
+}
+
 // ─────────────────────────────────────────────────────────────────
 // AUTENTICACIÓN
 // ─────────────────────────────────────────────────────────────────
@@ -290,16 +296,6 @@ btnSubmit.addEventListener('click', async () => {
 
   setSubmitLoading(false);
 });
-
-// ─────────────────────────────────────────────────────────────────
-// BOTÓN VER MÁS
-// ─────────────────────────────────────────────────────────────────
-if (btnLoadMore) {
-  btnLoadMore.addEventListener('click', () => {
-    resenasVisibles += 3;
-    renderizarResenasVisibles();
-  });
-}
 
 // ─────────────────────────────────────────────────────────────────
 // INICIALIZACIÓN
