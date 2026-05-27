@@ -215,10 +215,15 @@ if (btnLoadMore) {
 // ─────────────────────────────────────────────────────────────────
 btnGoogleLogin.addEventListener('click', async () => {
   btnGoogleLogin.disabled = true;
+  
+  // Limpiamos la URL para evitar choques con anclas (#agendar)
+  const cleanUrl = window.location.origin + window.location.pathname;
+  
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: window.location.href },
+    options: { redirectTo: cleanUrl },
   });
+  
   if (error) {
     showMsg(authMessage, `Error: ${error.message}`, true);
     btnGoogleLogin.disabled = false;
