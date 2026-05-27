@@ -35,6 +35,8 @@ const userEmailDisplay = document.getElementById('user-email-display');
 const btnSubmit        = document.getElementById('btn-submit-review');
 const reviewMessage    = document.getElementById('review-message');
 const reviewsGrid      = document.getElementById('reviews-grid');
+const loadMoreContainer = document.getElementById('load-more-container');
+const btnLoadMore       = document.getElementById('btn-load-more');
 const starContainer    = document.getElementById('star-rating');
 const hiddenRating     = document.getElementById('review-rating');
 
@@ -116,13 +118,17 @@ function setSubmitLoading(isLoading) {
 // ─────────────────────────────────────────────────────────────────
 // RENDERIZADO DE RESEÑAS APROBADAS (SELECT)
 // ─────────────────────────────────────────────────────────────────
-async function loadApprovedReviews() {
-  // Limpiamos cards dinámicas previas
-  reviewsGrid.querySelectorAll('figure[data-dynamic]').forEach(el => el.remove());
+// ─────────────────────────────────────────────────────────────────
+// RENDERIZADO Y PAGINACIÓN DE RESEÑAS
+// ─────────────────────────────────────────────────────────────────
+let todasLasResenas = [];
+let resenasVisibles = 3; // Cuántas mostramos inicialmente
 
-  // ── SKELETON LOADER ──────────────────────────────────────────
-  // Se muestra mientras espera la respuesta de Supabase.
-  // Usa el mismo ancho de columna que las cards reales.
+async function loadApprovedReviews() {
+  reviewsGrid.innerHTML = '';
+  loadMoreContainer.classList.add('hidden');
+
+  // SKELETON LOADER
   const skeleton = document.createElement('div');
   skeleton.id = 'reviews-skeleton';
   skeleton.className = 'col-span-full flex justify-center gap-6 py-4';
@@ -130,12 +136,77 @@ async function loadApprovedReviews() {
     <div class="flex items-center gap-2 text-gray-600 text-xs animate-pulse">
       <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-        <path class="opacity-75" fill="currentColor"
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
       </svg>
       Cargando reseñas...
     </div>`;
   reviewsGrid.appendChild(skeleton);
+
+  const { data: reviews, error } = await supabase
+    .from('reviews')
+    .select('display_name, content, rating, created_at')
+    .eq('status', 'approved')
+    .order('created_at', { ascending: false });
+
+  document.getElementById('reviews-skeleton')?.remove();
+
+  if (error) {
+    console.error('[Donatostudio] Error cargando reseñas:', error.message);
+    return;
+  }
+
+  todasLasResenas = reviews;
+  renderizarResenasVisibles();
+}
+
+function renderizarResenasVisibles() {
+  // Limpiamos la grilla para pintarla de nuevo
+  reviewsGrid.innerHTML = '';
+  
+  // Cortamos el array para mostrar solo la cantidad permitida
+  const resenasAMostrar = todasLasResenas.slice(0, resenasVisibles);
+
+  resenasAMostrar.forEach((review, index) => {
+    const name     = review.display_name || 'Anónimo';
+    const initials = getInitials(name);
+    const stars    = Array.from({ length: 5 }, (_, i) => {
+      const active = i < review.rating;
+      return `<span class="${active ? 'text-barber-gold' : 'text-gray-700'}">${STAR_SVG}</span>`;
+    }).join('');
+
+    const safeContent = review.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const safeName    = name.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    const figure = document.createElement('figure');
+    figure.style.opacity    = '0';
+    figure.style.transform  = 'translateY(15px)';
+    figure.style.animation  = `fadeInUp 0.6s ease-out ${index * 0.1}s forwards`;
+    figure.className = 'bg-barber-dark border border-gray-800 p-6 sm:p-8 rounded-sm hover:border-barber-gold transition-all duration-500 transform hover:-translate-y-1 shadow-xl';
+
+    figure.innerHTML = `
+      <div class="flex gap-0.5 mb-3 sm:mb-4" aria-label="${review.rating} de 5 estrellas">
+        ${stars}
+      </div>
+      <blockquote>
+        <p class="text-xs sm:text-sm text-gray-300 mb-4 sm:mb-6 italic">"${safeContent}"</p>
+      </blockquote>
+      <figcaption class="flex items-center">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gray-700 rounded-full flex items-center justify-center text-white font-bold font-serif text-sm" aria-hidden="true">${initials}</div>
+        <cite class="ml-3 not-italic">
+          <p class="text-white font-bold text-xs sm:text-sm">${safeName}</p>
+        </cite>
+      </figcaption>`;
+
+    reviewsGrid.appendChild(figure);
+  });
+
+  // Mostramos u ocultamos el botón de "Ver más" si quedan reseñas
+  if (todasLasResenas.length > resenasVisibles) {
+    loadMoreContainer.classList.remove('hidden');
+  } else {
+    loadMoreContainer.classList.add('hidden');
+  }
+}
   // ─────────────────────────────────────────────────────────────
 
   const { data: reviews, error } = await supabase
@@ -303,6 +374,12 @@ btnSubmit.addEventListener('click', async () => {
 
 
 // ─────────────────────────────────────────────────────────────────
+btnLoadMore.addEventListener('click', () => {
+  // Sumamos 3 al límite y volvemos a pintar
+  resenasVisibles += 3;
+  renderizarResenasVisibles();
+});
+
 // INICIALIZACIÓN
 // ─────────────────────────────────────────────────────────────────
 (async () => {
