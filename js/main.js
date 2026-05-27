@@ -1,7 +1,7 @@
 // ============================================
 // js/main.js — Inicializador general
 // ============================================
-import { loginConMagicLink, enviarResena, cargarResenas, logout } from './app.js'
+import './app.js'
 
 // ── Cargar reseñas aprobadas al iniciar ──
 cargarResenas()
