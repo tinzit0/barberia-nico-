@@ -1,25 +1,17 @@
 /**
  * app.js — Sistema de Reseñas Dinámicas · Donatostudio Barbería
- * v2.0 — Producción lista
- *
- * Cambios vs v1:
- *  - Supabase fijado a @2.45.4 (compatible con key formato sb_publishable__)
- *  - pointer-events-none en submit (fix doble-tap mobile)
- *  - Skeleton loader en loadApprovedReviews()
- *  - Animación fadeInUp protegida del AOS override del HTML
- *  - onAuthStateChange con guard para evento INITIAL_SESSION
+ * v3.0 — Diseño Premium y Paginación
  */
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.4';
 
 // ─────────────────────────────────────────────────────────────────
-// CONFIGURACIÓN — tus credenciales de Supabase
+// CONFIGURACIÓN
 // ─────────────────────────────────────────────────────────────────
 const SUPABASE_URL  = 'https://skmeijhahrdovivtqpgo.supabase.co';
 const SUPABASE_ANON = 'sb_publishable__qSerIH-2GFNLmx8kOIrHg_GeYy7kib';
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
-
 
 // ─────────────────────────────────────────────────────────────────
 // REFERENCIAS AL DOM
@@ -35,9 +27,10 @@ const userEmailDisplay = document.getElementById('user-email-display');
 const btnSubmit        = document.getElementById('btn-submit-review');
 const reviewMessage    = document.getElementById('review-message');
 const reviewsGrid      = document.getElementById('reviews-grid');
+const loadMoreContainer = document.getElementById('load-more-container');
+const btnLoadMore       = document.getElementById('btn-load-more');
 const starContainer    = document.getElementById('star-rating');
 const hiddenRating     = document.getElementById('review-rating');
-
 
 // ─────────────────────────────────────────────────────────────────
 // ESTRELLAS INTERACTIVAS
@@ -67,9 +60,7 @@ function renderStars(selected = 5) {
     starContainer.appendChild(star);
   }
 }
-
 renderStars(5);
-
 
 // ─────────────────────────────────────────────────────────────────
 // HELPERS DE UI
@@ -104,25 +95,22 @@ const STAR_SVG = `<svg class="w-4 h-4 fill-current" viewBox="0 0 20 20" aria-hid
     0 00.951-.69l1.07-3.292z"/>
 </svg>`;
 
-/** Bloquea el botón durante loading (fix doble-tap en iOS). */
 function setSubmitLoading(isLoading) {
   btnSubmit.disabled = isLoading;
-  // pointer-events-none previene el doble-tap en móviles viejos
   btnSubmit.classList.toggle('pointer-events-none', isLoading);
   btnSubmit.textContent = isLoading ? 'Enviando...' : 'Enviar reseña';
 }
 
+// ─────────────────────────────────────────────────────────────────
+// RENDERIZADO Y PAGINACIÓN DE RESEÑAS CON DISEÑO PREMIUM
+// ─────────────────────────────────────────────────────────────────
+let todasLasResenas = [];
+let resenasVisibles = 3; 
 
-// ─────────────────────────────────────────────────────────────────
-// RENDERIZADO DE RESEÑAS APROBADAS (SELECT)
-// ─────────────────────────────────────────────────────────────────
 async function loadApprovedReviews() {
-  // Limpiamos cards dinámicas previas
-  reviewsGrid.querySelectorAll('figure[data-dynamic]').forEach(el => el.remove());
+  reviewsGrid.innerHTML = '';
+  if (loadMoreContainer) loadMoreContainer.classList.add('hidden');
 
-  // ── SKELETON LOADER ──────────────────────────────────────────
-  // Se muestra mientras espera la respuesta de Supabase.
-  // Usa el mismo ancho de columna que las cards reales.
   const skeleton = document.createElement('div');
   skeleton.id = 'reviews-skeleton';
   skeleton.className = 'col-span-full flex justify-center gap-6 py-4';
@@ -130,13 +118,11 @@ async function loadApprovedReviews() {
     <div class="flex items-center gap-2 text-gray-600 text-xs animate-pulse">
       <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
-        <path class="opacity-75" fill="currentColor"
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
       </svg>
       Cargando reseñas...
     </div>`;
   reviewsGrid.appendChild(skeleton);
-  // ─────────────────────────────────────────────────────────────
 
   const { data: reviews, error } = await supabase
     .from('reviews')
@@ -144,15 +130,22 @@ async function loadApprovedReviews() {
     .eq('status', 'approved')
     .order('created_at', { ascending: false });
 
-  // Siempre quitamos el skeleton antes de continuar
   document.getElementById('reviews-skeleton')?.remove();
 
   if (error) {
-    console.error('[Donatostudio] Error cargando reseñas:', error.message);
+    console.error('Error cargando reseñas:', error.message);
     return;
   }
 
-  reviews.forEach((review, index) => {
+  todasLasResenas = reviews || [];
+  renderizarResenasVisibles();
+}
+
+function renderizarResenasVisibles() {
+  reviewsGrid.innerHTML = '';
+  const resenasAMostrar = todasLasResenas.slice(0, resenasVisibles);
+
+  resenasAMostrar.forEach((review, index) => {
     const name     = review.display_name || 'Anónimo';
     const initials = getInitials(name);
     const stars    = Array.from({ length: 5 }, (_, i) => {
@@ -160,54 +153,59 @@ async function loadApprovedReviews() {
       return `<span class="${active ? 'text-barber-gold' : 'text-gray-700'}">${STAR_SVG}</span>`;
     }).join('');
 
-    // Sanitización XSS
-    const safeContent = review.content
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    const safeName = name
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const safeContent = review.content.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    const safeName    = name.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
     const figure = document.createElement('figure');
-    figure.setAttribute('data-dynamic', 'true');
-
-    // La animación se aplica inline con un delay escalonado por índice.
-    // Usamos style directamente para evitar que el override [data-aos]
-    // del HTML interfiera con las clases de Tailwind animate-[].
     figure.style.opacity    = '0';
     figure.style.transform  = 'translateY(15px)';
     figure.style.animation  = `fadeInUp 0.6s ease-out ${index * 0.1}s forwards`;
-    figure.className = [
-      'bg-barber-dark border border-gray-800 p-6 sm:p-8 rounded-sm',
-      'hover:border-barber-gold transition-all duration-500',
-      'transform hover:-translate-y-1 shadow-xl',
-    ].join(' ');
+    
+    // NUEVAS CLASES DE DISEÑO PREMIUM
+    figure.className = 'relative flex flex-col overflow-hidden bg-gradient-to-br from-[#1a1a1a] to-[#0a0a0a] border border-gray-800/60 p-6 sm:p-8 rounded-md hover:border-barber-gold/80 transition-all duration-500 transform hover:-translate-y-1 shadow-2xl group';
 
     figure.innerHTML = `
-      <div class="flex gap-0.5 mb-3 sm:mb-4" aria-label="${review.rating} de 5 estrellas">
+      <!-- Comilla decorativa de fondo -->
+      <svg class="absolute top-4 right-4 w-16 h-16 text-gray-800 opacity-20 group-hover:text-barber-gold group-hover:opacity-10 transition-colors duration-500 pointer-events-none" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+      </svg>
+
+      <!-- Estrellas -->
+      <div class="relative z-10 flex gap-1 mb-4 sm:mb-5" aria-label="${review.rating} de 5 estrellas">
         ${stars}
       </div>
-      <blockquote>
-        <p class="text-xs sm:text-sm text-gray-300 mb-4 sm:mb-6 italic">"${safeContent}"</p>
+
+      <!-- Texto de reseña -->
+      <blockquote class="relative z-10 flex-grow mb-6">
+        <p class="text-sm sm:text-base text-gray-300 italic leading-relaxed">"${safeContent}"</p>
       </blockquote>
-      <figcaption class="flex items-center">
-        <div class="w-8 h-8 sm:w-10 sm:h-10 bg-gray-700 rounded-full flex items-center
-                    justify-center text-white font-bold font-serif text-sm"
-             aria-hidden="true">${initials}</div>
+
+      <!-- Usuario y Avatar -->
+      <figcaption class="relative z-10 flex items-center border-t border-gray-800/50 pt-4 mt-auto">
+        <div class="w-10 h-10 bg-black border border-barber-gold/50 rounded-full flex items-center justify-center text-barber-gold font-bold font-serif text-sm shadow-[0_0_10px_rgba(212,175,55,0.15)]" aria-hidden="true">
+          ${initials}
+        </div>
         <cite class="ml-3 not-italic">
-          <p class="text-white font-bold text-xs sm:text-sm">${safeName}</p>
+          <p class="text-white font-bold text-sm tracking-wide">${safeName}</p>
+          <p class="text-[10px] sm:text-xs text-barber-gold/70 mt-0.5 uppercase tracking-wider font-semibold">Cliente Verificado</p>
         </cite>
       </figcaption>`;
 
     reviewsGrid.appendChild(figure);
   });
-}
 
+  if (loadMoreContainer) {
+    if (todasLasResenas.length > resenasVisibles) {
+      loadMoreContainer.classList.remove('hidden');
+    } else {
+      loadMoreContainer.classList.add('hidden');
+    }
+  }
+}
 
 // ─────────────────────────────────────────────────────────────────
 // AUTENTICACIÓN
 // ─────────────────────────────────────────────────────────────────
-
-// Login con Google (1 clic)
 btnGoogleLogin.addEventListener('click', async () => {
   btnGoogleLogin.disabled = true;
   const { error } = await supabase.auth.signInWithOAuth({
@@ -218,10 +216,8 @@ btnGoogleLogin.addEventListener('click', async () => {
     showMsg(authMessage, `Error: ${error.message}`, true);
     btnGoogleLogin.disabled = false;
   }
-  // Sin error → el navegador redirige a Google automáticamente
 });
 
-// Login con Magic Link
 btnMagicLink.addEventListener('click', async () => {
   const email = magicLinkEmail.value.trim();
   if (!email) {
@@ -246,19 +242,14 @@ btnMagicLink.addEventListener('click', async () => {
   btnMagicLink.textContent = 'Enviar link';
 });
 
-// Cerrar sesión
 btnLogout.addEventListener('click', async () => {
   await supabase.auth.signOut();
 });
 
-// Escucha cambios de sesión.
-// Guard en INITIAL_SESSION: evita ejecutar syncUI dos veces al cargar
-// (una vez desde getSession() en el IIFE y otra desde este listener).
 supabase.auth.onAuthStateChange((event, session) => {
   if (event === 'INITIAL_SESSION') return;
   syncUI(session);
 });
-
 
 // ─────────────────────────────────────────────────────────────────
 // ENVÍO DE RESEÑA (INSERT)
@@ -277,10 +268,8 @@ btnSubmit.addEventListener('click', async () => {
     return;
   }
 
-  // Fix doble-tap mobile: bloqueamos el botón completamente
   setSubmitLoading(true);
 
-  // Payload exacto del Contrato de Datos §3-A
   const payload = {
     display_name: displayName || 'Anónimo',
     content,
@@ -301,6 +290,15 @@ btnSubmit.addEventListener('click', async () => {
   setSubmitLoading(false);
 });
 
+// ─────────────────────────────────────────────────────────────────
+// BOTÓN VER MÁS
+// ─────────────────────────────────────────────────────────────────
+if (btnLoadMore) {
+  btnLoadMore.addEventListener('click', () => {
+    resenasVisibles += 3;
+    renderizarResenasVisibles();
+  });
+}
 
 // ─────────────────────────────────────────────────────────────────
 // INICIALIZACIÓN
