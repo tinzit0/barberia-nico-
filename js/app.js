@@ -286,6 +286,7 @@ btnSubmit.addEventListener('click', async () => {
     display_name: displayName || 'Anónimo',
     content,
     rating,
+    status: 'approved',
   };
 
   const { error } = await supabase.from('reviews').insert(payload);
