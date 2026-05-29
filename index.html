@@ -41,9 +41,13 @@
 <body class="bg-barber-dark text-gray-200 font-sans antialiased scroll-smooth overflow-x-hidden">
 
     <!-- HERO -->
-    <header role="banner" class="relative h-screen flex items-center justify-center text-center bg-black px-4">
-        <div class="absolute inset-0 opacity-30 transition-transform duration-[10000ms] hover:scale-105"
-             style="background-image: url('assets/WhatsApp%20Image%202026-05-23%20at%2022.37.19.jpeg'); background-size: cover; background-position: center;"></div>
+    <header role="banner" class="relative h-screen flex items-center justify-center text-center bg-black px-4 overflow-hidden">
+        
+        <!-- AQUÍ ESTÁ EL VIDEO HD DE FONDO -->
+        <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover opacity-40 transition-transform duration-[10000ms] hover:scale-105">
+            <source src="assets/ffad8fb9ab10adc77a86562354d4e507_t1.mp4" type="video/mp4">
+        </video>
+        
         <div class="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center mt-32">
             <h1 class="font-serif text-5xl sm:text-7xl text-white mb-4 opacity-0 animate-[fadeInUp_1s_ease-out_0.1s_forwards]">Donatostudio</h1>
             <p class="text-sm sm:text-lg md:text-xl text-gray-300 mb-8 tracking-widest uppercase opacity-0 animate-[fadeInUp_1s_ease-out_0.3s_forwards]">Barbería • Nonguén, Concepción</p>
