@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Donatostudio Barbería | Nonguén</title>
     <meta name="description" content="Barbería Donatostudio en Nonguén, Concepción. Cortes de cabello, barba y más con Nico. Agenda tu hora online.">
-    <meta name="theme-color" content="#111111">
+    <meta name="theme-color" content="#ff7a45">
     <meta property="og:title" content="Donatostudio Barbería | Nonguén">
     <meta property="og:description" content="Tu barbería de confianza en Nonguén, Concepción. Cortes, barba y ritual completo con Nico.">
     <meta property="og:image" content="assets/images/og-preview.jpg">
@@ -23,7 +23,8 @@
                         serif: ['Playfair Display', 'serif'],
                     },
                     colors: {
-                        barber: { dark: '#111111', gold: '#d4af37', gray: '#2d2d2d' }
+                        barber: { dark: '#111111', gold: '#f5a623', gray: '#2d2d2d' },
+                        summer: { sun: '#ffc93c', coral: '#ff6b4a', sunset: '#ff7a45', sea: '#14b8c4', sand: '#f6e3c5' }
                     }
                 }
             }
@@ -34,7 +35,36 @@
             from { opacity: 0; transform: translateY(15px); }
             to   { opacity: 1; transform: translateY(0); }
         }
+        @keyframes sunPulse {
+            0%, 100% { transform: scale(1);    opacity: .55; }
+            50%      { transform: scale(1.08); opacity: .75; }
+        }
+        @keyframes floaty {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50%      { transform: translateY(-10px) rotate(4deg); }
+        }
+        @keyframes waveMove {
+            from { transform: translateX(0); }
+            to   { transform: translateX(-50%); }
+        }
         [data-aos] { opacity: 1 !important; transform: none !important; }
+        .text-summer-gradient {
+            background: linear-gradient(90deg, #ffc93c 0%, #ff7a45 50%, #ff6b4a 100%);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .sun-glow {
+            background: radial-gradient(circle, rgba(255,201,60,.9) 0%, rgba(255,122,69,.45) 40%, rgba(255,107,74,0) 70%);
+            animation: sunPulse 6s ease-in-out infinite;
+        }
+        .floaty { animation: floaty 5s ease-in-out infinite; }
+        .wave-track { width: 200%; animation: waveMove 18s linear infinite; }
+        .summer-divider {
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #14b8c4, #ffc93c, #ff6b4a, transparent);
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .sun-glow, .floaty, .wave-track { animation: none; }
+        }
     </style>
 </head>
 
@@ -43,15 +73,39 @@
     <!-- HERO -->
     <header role="banner" class="relative h-screen flex items-center justify-center text-center bg-black px-4 overflow-hidden">
         
-        <!-- AQUÍ ESTÁ EL VIDEO HD DE FONDO -->
-        <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover opacity-40 transition-transform duration-[10000ms] hover:scale-105">
-            <source src="assets/ffad8fb9ab10adc77a86562354d4e507_t1.mp4" type="video/mp4">
+        <!-- BARRA DE VERANO -->
+        <div class="absolute top-0 inset-x-0 z-20 bg-gradient-to-r from-summer-sea via-summer-sun to-summer-coral text-black text-[11px] sm:text-xs font-semibold uppercase tracking-widest py-2 px-4 text-center">
+            <i class="fa-solid fa-sun mr-1" aria-hidden="true"></i> Temporada de Verano · Refresca tu look con Nico <i class="fa-solid fa-umbrella-beach ml-1" aria-hidden="true"></i>
+        </div>
+
+        <!-- VIDEO PRINCIPAL DE FONDO -->
+        <video autoplay loop muted playsinline preload="auto" class="absolute inset-0 w-full h-full object-cover opacity-50 transition-transform duration-[10000ms] hover:scale-105">
+            <source src="assets/video-principal.mp4" type="video/mp4">
         </video>
-        
+
+        <!-- Atardecer de verano sobre el video -->
+        <div class="absolute inset-0 bg-gradient-to-b from-summer-sunset/30 via-summer-coral/10 to-black/80 pointer-events-none"></div>
+        <div class="sun-glow absolute -top-24 right-[-6rem] sm:right-10 w-72 h-72 sm:w-96 sm:h-96 rounded-full pointer-events-none" aria-hidden="true"></div>
+        <i class="fa-solid fa-sun floaty absolute top-20 left-6 sm:left-16 text-3xl sm:text-4xl text-summer-sun/70 pointer-events-none" aria-hidden="true"></i>
+        <i class="fa-solid fa-umbrella-beach floaty absolute bottom-28 right-6 sm:right-20 text-3xl sm:text-4xl text-summer-sea/70 pointer-events-none" style="animation-delay:1.5s" aria-hidden="true"></i>
+
         <div class="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center mt-32">
-            <h1 class="font-serif text-5xl sm:text-7xl text-white mb-4 opacity-0 animate-[fadeInUp_1s_ease-out_0.1s_forwards]">Donatostudio</h1>
-            <p class="text-sm sm:text-lg md:text-xl text-gray-300 mb-8 tracking-widest uppercase opacity-0 animate-[fadeInUp_1s_ease-out_0.3s_forwards]">Barbería • Nonguén, Concepción</p>
-            <a href="#agendar" class="inline-block bg-white text-black font-bold py-3 px-6 sm:px-8 text-xs sm:text-sm tracking-widest uppercase hover:bg-barber-gold hover:text-white transition-all duration-500 ease-out shadow-lg opacity-0 animate-[fadeInUp_1s_ease-out_0.6s_forwards]">Reserva con Nico</a>
+            <span class="inline-flex items-center gap-2 border border-summer-sun/60 bg-black/30 backdrop-blur-sm text-summer-sun text-[11px] sm:text-xs font-semibold uppercase tracking-[0.3em] px-4 py-1.5 rounded-full mb-5 opacity-0 animate-[fadeInUp_1s_ease-out_0s_forwards]">
+                <i class="fa-solid fa-sun" aria-hidden="true"></i> Summer Edition
+            </span>
+            <h1 class="font-serif text-5xl sm:text-7xl text-white mb-4 opacity-0 animate-[fadeInUp_1s_ease-out_0.1s_forwards]">Donato<span class="text-summer-gradient">studio</span></h1>
+            <p class="text-sm sm:text-lg md:text-xl text-gray-200 mb-8 tracking-widest uppercase opacity-0 animate-[fadeInUp_1s_ease-out_0.3s_forwards]">Barbería • Nonguén, Concepción</p>
+            <a href="#agendar" class="inline-block bg-gradient-to-r from-summer-sun to-summer-coral text-black font-bold py-3 px-6 sm:px-8 text-xs sm:text-sm tracking-widest uppercase rounded-full hover:scale-105 hover:shadow-[0_0_30px_rgba(255,122,69,0.6)] transition-all duration-500 ease-out shadow-lg opacity-0 animate-[fadeInUp_1s_ease-out_0.6s_forwards]">Reserva tu look de verano</a>
+        </div>
+
+        <!-- Olas -->
+        <div class="absolute bottom-0 inset-x-0 h-16 sm:h-24 overflow-hidden pointer-events-none" aria-hidden="true">
+            <svg class="wave-track absolute bottom-0 h-full opacity-40" viewBox="0 0 2880 100" preserveAspectRatio="none">
+                <path fill="#14b8c4" d="M0 60 Q 180 20 360 60 T 720 60 T 1080 60 T 1440 60 T 1800 60 T 2160 60 T 2520 60 T 2880 60 V100 H0 Z"/>
+            </svg>
+            <svg class="absolute bottom-0 w-full h-2/3" viewBox="0 0 1440 100" preserveAspectRatio="none">
+                <path fill="#111111" d="M0 50 C 240 90 480 10 720 50 C 960 90 1200 10 1440 50 V100 H0 Z"/>
+            </svg>
         </div>
     </header>
 
@@ -63,8 +117,9 @@
                 <h2 class="text-2xl sm:text-3xl font-serif text-white mb-4 sm:mb-6">La Experiencia Donatostudio</h2>
                 <p class="text-sm sm:text-base text-gray-400 leading-relaxed">Buscamos entregar el mejor servicio a nuestros clientes, siguiendo el vanguardismo y modernismo, pero siempre desde un enfoque tradicional. Logramos una experiencia completa en la cual cada cliente es un desafío, entregándoles un trato personalizado para obtener su mejor versión.</p>
             </div>
-            <div class="bg-barber-gray p-6 sm:p-8 rounded-sm text-center border border-gray-800 hover:border-barber-gold transition-all duration-500 shadow-xl mx-auto w-full max-w-md md:max-w-none">
-                <h3 class="text-xl sm:text-2xl font-serif text-white mb-4 sm:mb-6">Horario de Atención</h3>
+            <div class="relative overflow-hidden bg-barber-gray p-6 sm:p-8 rounded-md text-center border border-gray-800 hover:border-summer-sunset transition-all duration-500 shadow-xl mx-auto w-full max-w-md md:max-w-none">
+                <div class="absolute top-0 inset-x-0 summer-divider"></div>
+                <h3 class="text-xl sm:text-2xl font-serif text-white mb-4 sm:mb-6"><i class="fa-solid fa-sun text-summer-sun mr-2" aria-hidden="true"></i>Horario de Atención</h3>
                 <ul class="space-y-3 sm:space-y-4 text-sm sm:text-base text-gray-300">
                     <li class="border-b border-gray-700 pb-2">
                         <span class="block font-bold text-white">Lunes a Viernes</span>
@@ -145,25 +200,34 @@
                     </div>
                 </div>
             </div>
-            <h3 class="text-xl font-serif text-center text-white mb-6 uppercase tracking-wider">El Studio en Acción</h3>
+            <h3 class="text-xl font-serif text-center text-white mb-2 uppercase tracking-wider">El Studio en Acción</h3>
+            <p class="text-center text-xs sm:text-sm text-summer-sun mb-6"><i class="fa-solid fa-sun mr-1" aria-hidden="true"></i>Looks frescos para este verano</p>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
-                <div class="bg-barber-gray rounded-sm overflow-hidden aspect-[9/16] shadow-lg border border-gray-800">
-                    <video title="Reel 1 Donatostudio" class="w-full h-full object-cover" autoplay loop muted playsinline preload="none">
-                        <source src="assets/WhatsApp%20Video%202026-05-23%20at%2022.38.00.mp4" type="video/mp4">
+                <div class="bg-barber-gray rounded-xl overflow-hidden aspect-[9/16] shadow-lg border border-gray-800 hover:border-summer-sunset hover:shadow-[0_0_25px_rgba(255,122,69,0.35)] transition-all duration-500">
+                    <video title="Reel 1 Donatostudio" class="reel w-full h-full object-cover" loop muted playsinline preload="none">
+                        <source src="assets/video1.MOV" type="video/mp4">
                     </video>
                 </div>
-                <div class="bg-barber-gray rounded-sm overflow-hidden aspect-[9/16] shadow-lg border border-gray-800">
-                    <video title="Reel 2 Donatostudio" class="w-full h-full object-cover" autoplay loop muted playsinline preload="none">
-                        <source src="assets/WhatsApp%20Video%202026-05-23%20at%2022.38.56.mp4" type="video/mp4">
+                <div class="bg-barber-gray rounded-xl overflow-hidden aspect-[9/16] shadow-lg border border-gray-800 hover:border-summer-sea hover:shadow-[0_0_25px_rgba(20,184,196,0.35)] transition-all duration-500">
+                    <video title="Reel 2 Donatostudio" class="reel w-full h-full object-cover" loop muted playsinline preload="none">
+                        <source src="assets/video2.MOV" type="video/mp4">
                     </video>
                 </div>
-                <div class="bg-barber-gray rounded-sm overflow-hidden aspect-[9/16] shadow-lg border border-gray-800">
-                    <video title="Reel 3 Donatostudio" class="w-full h-full object-cover" autoplay loop muted playsinline preload="none">
-                        <source src="assets/WhatsApp%20Video%202026-05-23%20at%2022.37.55.mp4" type="video/mp4">
+                <div class="bg-barber-gray rounded-xl overflow-hidden aspect-[9/16] shadow-lg border border-gray-800 hover:border-summer-coral hover:shadow-[0_0_25px_rgba(255,107,74,0.35)] transition-all duration-500">
+                    <video title="Reel 3 Donatostudio" class="reel w-full h-full object-cover" loop muted playsinline preload="none">
+                        <source src="assets/video3.MOV" type="video/mp4">
                     </video>
                 </div>
             </div>
         </section>
+
+        <div class="summer-divider max-w-4xl mx-auto"></div>
+
+        <!-- RESEÑAS -->
+        <section id="resenas" class="py-12 sm:py-20 px-4 sm:px-6">
+            <div class="max-w-6xl mx-auto">
+                <h2 class="text-2xl sm:text-3xl font-serif text-center text-white mb-2 uppercase tracking-wider">Lo que dicen nuestros clientes</h2>
+                <p class="text-center text-xs sm:text-sm text-gray-400 mb-8 sm:mb-12">Reseñas reales de quienes pasaron por el studio.</p>
 
         <!-- Grid reseñas dinámicas -->
                 <div id="reviews-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
@@ -274,11 +338,13 @@
     </main>
 
     <!-- FOOTER -->
-    <footer class="bg-black py-10 sm:py-12 border-t border-gray-900">
+    <div class="summer-divider"></div>
+    <footer class="bg-black py-10 sm:py-12">
         <div class="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left">
             <div class="space-y-1">
-                <h3 class="font-serif text-2xl text-white">Donatostudio</h3>
+                <h3 class="font-serif text-2xl text-white">Donato<span class="text-summer-gradient">studio</span></h3>
                 <p class="text-gray-500 text-sm">Tu barbería de confianza en Nonguén, Concepción.</p>
+                <p class="text-summer-sun text-xs pt-2"><i class="fa-solid fa-sun mr-1" aria-hidden="true"></i>¡Feliz verano!</p>
             </div>
             <div class="space-y-1">
                 <h4 class="text-white font-bold mb-4 uppercase tracking-wider text-sm">Contacto</h4>
@@ -304,7 +370,24 @@
         </div>
     </footer>
 
-    <!-- ÚNICO script al final -->
+    <!-- Reels: solo cargan y reproducen cuando están en pantalla (son archivos pesados) -->
+    <script>
+        (function () {
+            const reels = document.querySelectorAll('video.reel');
+            if (!('IntersectionObserver' in window)) {
+                reels.forEach(v => { v.preload = 'auto'; v.play().catch(() => {}); });
+                return;
+            }
+            const io = new IntersectionObserver(entries => {
+                entries.forEach(({ target: v, isIntersecting }) => {
+                    if (isIntersecting) { v.preload = 'auto'; v.play().catch(() => {}); }
+                    else { v.pause(); }
+                });
+            }, { threshold: 0.25 });
+            reels.forEach(v => io.observe(v));
+        })();
+    </script>
+
     <script type="module" src="js/app.js"></script>
 
 </body>
